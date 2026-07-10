@@ -1,0 +1,25 @@
+# ---- Python / Django ----
+__pycache__/
+*.py[cod]
+.venv/
+server/db.sqlite3
+server/media/
+server/staticfiles/
+server/.env
+
+# ---- Node / React ----
+node_modules/
+client/dist/
+client/.env
+
+# ---- Editor / OS ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+.claude
+.claude/
+
+# ---- Keep examples ----
+!**/.env.example
+

@@ -1,0 +1,378 @@
+<style>
+  :root {
+    --bg: #eef1f8;
+    --frame: #dfe4f0;
+    --surface: #ffffff;
+    --surface-2: #f4f6fb;
+    --border: #e2e6f0;
+    --ink: #1a2233;
+    --muted: #6b7488;
+    --primary: #4f7cff;
+    --primary-soft: #eef3ff;
+    --green: #16a34a;
+    --green-soft: #e7f7ee;
+    --purple: #9333ea;
+    --purple-soft: #f4ebfe;
+    --amber: #d97706;
+    --amber-soft: #fdf1e0;
+    --shadow: 0 1px 2px rgba(16,24,40,.06), 0 10px 30px rgba(16,24,40,.06);
+    --radius: 14px;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace;
+    --sans: -apple-system, "Segoe UI", system-ui, Roboto, Helvetica, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1220; --frame: #141a2b; --surface: #171e30; --surface-2: #1e2740;
+      --border: #2a3350; --ink: #e8ecf6; --muted: #93a0bd; --primary: #6d92ff;
+      --primary-soft: #202b4d; --green: #34d17f; --green-soft: #16311f;
+      --purple: #b57bf5; --purple-soft: #2a1c40; --amber: #f0a44a;
+      --amber-soft: #33260f;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 34px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0e1220; --frame: #141a2b; --surface: #171e30; --surface-2: #1e2740;
+    --border: #2a3350; --ink: #e8ecf6; --muted: #93a0bd; --primary: #6d92ff;
+    --primary-soft: #202b4d; --green: #34d17f; --green-soft: #16311f;
+    --purple: #b57bf5; --purple-soft: #2a1c40; --amber: #f0a44a; --amber-soft: #33260f;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 34px rgba(0,0,0,.35);
+  }
+  :root[data-theme="light"] {
+    --bg: #eef1f8; --frame: #dfe4f0; --surface: #ffffff; --surface-2: #f4f6fb;
+    --border: #e2e6f0; --ink: #1a2233; --muted: #6b7488; --primary: #4f7cff;
+    --primary-soft: #eef3ff; --green: #16a34a; --green-soft: #e7f7ee;
+    --purple: #9333ea; --purple-soft: #f4ebfe; --amber: #d97706; --amber-soft: #fdf1e0;
+    --shadow: 0 1px 2px rgba(16,24,40,.06), 0 10px 30px rgba(16,24,40,.06);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 28px 20px 56px; }
+
+  /* ---- prototype header ---- */
+  .proto-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+  .proto-title { display: flex; flex-direction: column; gap: 4px; }
+  .proto-title .eyebrow { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--primary); font-weight: 700; }
+  .proto-title h1 { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -.02em; text-wrap: balance; }
+  .proto-title p { margin: 0; color: var(--muted); font-size: 13px; }
+
+  .tabs { display: flex; gap: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 5px; box-shadow: var(--shadow); flex-wrap: wrap; }
+  .tabs button { border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 13px; font-weight: 600; padding: 8px 13px; border-radius: 8px; cursor: pointer; transition: .15s; }
+  .tabs button:hover { color: var(--ink); }
+  .tabs button.active { background: var(--primary); color: #fff; }
+  .tabs button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+  /* ---- browser chrome frame ---- */
+  .frame { background: var(--frame); border-radius: 16px; padding: 12px; box-shadow: var(--shadow); }
+  .frame-bar { display: flex; align-items: center; gap: 8px; padding: 4px 6px 12px; }
+  .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .dot.r { background: #ff5f57; } .dot.y { background: #febc2e; } .dot.g { background: #28c840; }
+  .frame-url { margin-left: 10px; flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 7px; padding: 5px 12px; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .viewport { background: var(--surface-2); border-radius: 10px; overflow: hidden; min-height: 560px; }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ---- auth screen ---- */
+  .auth { min-height: 560px; display: grid; place-items: center; padding: 32px; background:
+      radial-gradient(1200px 400px at 50% -10%, var(--primary-soft), transparent 70%); }
+  .auth-card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow); width: 100%; max-width: 380px; padding: 30px; display: flex; flex-direction: column; gap: 14px; }
+  .brand-lg { font-weight: 800; font-size: 20px; color: var(--primary); letter-spacing: -.02em; }
+  .auth-card h2 { margin: 4px 0 0; font-size: 21px; letter-spacing: -.01em; }
+  .auth-card .sub { color: var(--muted); font-size: 13px; margin: 0 0 4px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 12px; font-weight: 600; color: var(--ink); }
+  .field .input { border: 1px solid var(--border); background: var(--surface); border-radius: 9px; padding: 10px 12px; font-size: 13px; color: var(--muted); }
+  .role-toggle { display: flex; gap: 8px; }
+  .role-toggle span { flex: 1; text-align: center; padding: 9px; border-radius: 9px; border: 1px solid var(--border); font-size: 13px; font-weight: 600; color: var(--muted); }
+  .role-toggle span.on { border-color: var(--primary); color: var(--primary); background: var(--primary-soft); }
+  .btn { border: 0; border-radius: 9px; padding: 11px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .btn.primary { background: var(--primary); color: #fff; }
+  .center-note { text-align: center; font-size: 12px; color: var(--muted); }
+  .center-note a { color: var(--primary); text-decoration: none; font-weight: 600; }
+
+  /* ---- app shell ---- */
+  .app { display: grid; grid-template-columns: 210px 1fr; min-height: 560px; }
+  .side { background: var(--surface); border-right: 1px solid var(--border); padding: 18px 14px; display: flex; flex-direction: column; }
+  .side .brand { font-weight: 800; font-size: 17px; color: var(--primary); padding: 6px; letter-spacing: -.02em; }
+  .side nav { display: flex; flex-direction: column; gap: 3px; margin-top: 12px; flex: 1; }
+  .side nav a { padding: 9px 11px; border-radius: 9px; font-size: 13px; font-weight: 500; color: var(--muted); text-decoration: none; }
+  .side nav a.on { background: var(--primary-soft); color: var(--primary); font-weight: 600; }
+  .side .who { border-top: 1px solid var(--border); padding-top: 12px; display: flex; align-items: center; gap: 9px; }
+  .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--primary); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 14px; }
+  .who .nm { font-size: 12.5px; font-weight: 600; }
+  .who .rl { font-size: 11px; color: var(--muted); text-transform: capitalize; }
+
+  .main { padding: 24px 26px; overflow: hidden; }
+  .main h2 { margin: 0; font-size: 20px; letter-spacing: -.01em; }
+  .main .lead { margin: 3px 0 20px; color: var(--muted); font-size: 13px; }
+  .head-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 13px; margin-bottom: 20px; }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 15px; position: relative; overflow: hidden; }
+  .stat::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--primary); }
+  .stat.g::before { background: var(--green); } .stat.p::before { background: var(--purple); } .stat.a::before { background: var(--amber); }
+  .stat .v { font-size: 27px; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .stat .l { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .panels { display: grid; grid-template-columns: 1.15fr 1fr; gap: 16px; }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
+  .panel h3 { margin: 0 0 14px; font-size: 14px; }
+
+  /* css bar chart */
+  .chart { display: flex; align-items: flex-end; gap: 22px; height: 170px; padding: 6px 6px 0; }
+  .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; justify-content: flex-end; }
+  .bar { width: 100%; max-width: 54px; border-radius: 7px 7px 0 0; }
+  .bar-col .cap { font-size: 11px; color: var(--muted); text-align: center; }
+  .bar-col .num { font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  .list { list-style: none; margin: 0; padding: 0; }
+  .list li { padding: 11px 2px; border-bottom: 1px solid var(--border); font-size: 13px; display: flex; gap: 8px; }
+  .list li:last-child { border-bottom: 0; }
+  .list .code { color: var(--primary); font-weight: 700; }
+
+  .courses { display: grid; grid-template-columns: repeat(2, 1fr); gap: 11px; }
+  .course { border: 1px solid var(--border); border-radius: 11px; padding: 13px; background: var(--surface); }
+  .course .code { color: var(--primary); font-weight: 700; font-size: 13px; }
+  .course .t { font-size: 12.5px; margin-top: 3px; color: var(--muted); }
+
+  /* toolbar + table */
+  .toolbar { display: flex; gap: 9px; margin-bottom: 14px; flex-wrap: wrap; }
+  .toolbar .search { flex: 1; min-width: 180px; border: 1px solid var(--border); background: var(--surface); border-radius: 9px; padding: 9px 12px; font-size: 13px; color: var(--muted); }
+  .toolbar .sel { border: 1px solid var(--border); background: var(--surface); border-radius: 9px; padding: 9px 12px; font-size: 13px; color: var(--muted); }
+  .btn.primary.sm { padding: 9px 14px; }
+  table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  th { text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); padding: 11px 14px; background: var(--surface-2); border-bottom: 1px solid var(--border); }
+  td { padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 13px; }
+  tr:last-child td { border-bottom: 0; }
+  .qtext { max-width: 340px; }
+  .pill { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .pill.mcq { background: var(--primary-soft); color: var(--primary); }
+  .pill.tf { background: var(--green-soft); color: var(--green); }
+  .pill.sa { background: var(--purple-soft); color: var(--purple); }
+  .rowact a { color: var(--primary); font-weight: 600; font-size: 12.5px; text-decoration: none; margin-right: 12px; }
+  .rowact a.del { color: #e5484d; }
+
+  .footnote { margin-top: 16px; color: var(--muted); font-size: 12px; text-align: center; }
+
+  @media (max-width: 780px) {
+    .app { grid-template-columns: 1fr; }
+    .side { display: none; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .panels { grid-template-columns: 1fr; }
+    .courses { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="wrap">
+  <div class="proto-head">
+    <div class="proto-title">
+      <span class="eyebrow">FYP · Phase 1 Mockup</span>
+      <h1>e-Testing Service — UI/UX Mockup</h1>
+      <p>Clickable reference for the four Phase-1 screens. Recreate in Figma from these frames.</p>
+    </div>
+    <div class="tabs" role="tablist">
+      <button class="active" data-screen="login" role="tab">Login</button>
+      <button data-screen="instructor" role="tab">Instructor</button>
+      <button data-screen="questions" role="tab">Question Bank</button>
+      <button data-screen="student" role="tab">Student</button>
+    </div>
+  </div>
+
+  <div class="frame">
+    <div class="frame-bar">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="frame-url" id="url">app.e-testing.local / login</span>
+    </div>
+    <div class="viewport">
+
+      <!-- LOGIN -->
+      <section class="screen active" id="login">
+        <div class="auth">
+          <div class="auth-card">
+            <div class="brand-lg">e-Testing</div>
+            <h2>Welcome back</h2>
+            <p class="sub">Sign in to your examination portal.</p>
+            <div class="role-toggle">
+              <span class="on">Student</span><span>Instructor</span>
+            </div>
+            <div class="field"><label>Email</label><div class="input">jibran@cuiatd.edu.pk</div></div>
+            <div class="field"><label>Password</label><div class="input">••••••••••</div></div>
+            <button class="btn primary">Sign in</button>
+            <div class="center-note">No account? <a>Create one</a></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- INSTRUCTOR DASHBOARD -->
+      <section class="screen" id="instructor">
+        <div class="app">
+          <aside class="side">
+            <div class="brand">e-Testing</div>
+            <nav>
+              <a class="on">Dashboard</a>
+              <a>Question Bank</a>
+            </nav>
+            <div class="who">
+              <div class="avatar">M</div>
+              <div><div class="nm">Mujahid Khan</div><div class="rl">instructor</div></div>
+            </div>
+          </aside>
+          <div class="main">
+            <div class="head-row">
+              <div><h2>Welcome, Mujahid Khan</h2><p class="lead">Instructor overview</p></div>
+            </div>
+            <div class="stats">
+              <div class="stat"><div class="v">6</div><div class="l">Courses</div></div>
+              <div class="stat g"><div class="v">148</div><div class="l">Students</div></div>
+              <div class="stat p"><div class="v">92</div><div class="l">Questions</div></div>
+              <div class="stat a"><div class="v">31</div><div class="l">AI-Generated</div></div>
+            </div>
+            <div class="panels">
+              <div class="panel">
+                <h3>Question bank composition</h3>
+                <div class="chart">
+                  <div class="bar-col"><span class="num">54</span><div class="bar" style="height:78%;background:var(--primary)"></div><span class="cap">Multiple<br>Choice</span></div>
+                  <div class="bar-col"><span class="num">21</span><div class="bar" style="height:34%;background:var(--green)"></div><span class="cap">True /<br>False</span></div>
+                  <div class="bar-col"><span class="num">17</span><div class="bar" style="height:27%;background:var(--purple)"></div><span class="cap">Short<br>Answer</span></div>
+                </div>
+              </div>
+              <div class="panel">
+                <h3>Recent courses</h3>
+                <ul class="list">
+                  <li><span class="code">CSC336</span> Web Technologies</li>
+                  <li><span class="code">CSC220</span> Data Structures</li>
+                  <li><span class="code">CSC391</span> Artificial Intelligence</li>
+                  <li><span class="code">CSC102</span> Programming Fundamentals</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- QUESTION BANK -->
+      <section class="screen" id="questions">
+        <div class="app">
+          <aside class="side">
+            <div class="brand">e-Testing</div>
+            <nav>
+              <a>Dashboard</a>
+              <a class="on">Question Bank</a>
+            </nav>
+            <div class="who">
+              <div class="avatar">M</div>
+              <div><div class="nm">Mujahid Khan</div><div class="rl">instructor</div></div>
+            </div>
+          </aside>
+          <div class="main">
+            <div class="head-row">
+              <div><h2>Question Bank</h2><p class="lead">Create, categorize and reuse assessment items.</p></div>
+              <button class="btn primary sm">+ New Question</button>
+            </div>
+            <div class="toolbar">
+              <div class="search">Search questions…</div>
+              <div class="sel">All types ▾</div>
+              <div class="sel">All difficulties ▾</div>
+            </div>
+            <table>
+              <thead>
+                <tr><th>Question</th><th>Type</th><th>Difficulty</th><th>Subject</th><th>Marks</th><th></th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="qtext">Which data structure uses FIFO ordering?</td>
+                  <td><span class="pill mcq">Multiple Choice</span></td>
+                  <td>Remember</td><td>Data Structures</td><td>1</td>
+                  <td class="rowact"><a>Edit</a><a class="del">Delete</a></td>
+                </tr>
+                <tr>
+                  <td class="qtext">HTTP is a stateless protocol.</td>
+                  <td><span class="pill tf">True / False</span></td>
+                  <td>Understand</td><td>Web Tech</td><td>1</td>
+                  <td class="rowact"><a>Edit</a><a class="del">Delete</a></td>
+                </tr>
+                <tr>
+                  <td class="qtext">Explain the role of an index in query performance.</td>
+                  <td><span class="pill sa">Short Answer</span></td>
+                  <td>Analyze</td><td>Databases</td><td>5</td>
+                  <td class="rowact"><a>Edit</a><a class="del">Delete</a></td>
+                </tr>
+                <tr>
+                  <td class="qtext">What is the time complexity of binary search?</td>
+                  <td><span class="pill mcq">Multiple Choice</span></td>
+                  <td>Apply</td><td>Algorithms</td><td>2</td>
+                  <td class="rowact"><a>Edit</a><a class="del">Delete</a></td>
+                </tr>
+                <tr>
+                  <td class="qtext">Design a normalized schema for an enrollment system.</td>
+                  <td><span class="pill sa">Short Answer</span></td>
+                  <td>Create</td><td>Databases</td><td>10</td>
+                  <td class="rowact"><a>Edit</a><a class="del">Delete</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- STUDENT DASHBOARD -->
+      <section class="screen" id="student">
+        <div class="app">
+          <aside class="side">
+            <div class="brand">e-Testing</div>
+            <nav><a class="on">Dashboard</a></nav>
+            <div class="who">
+              <div class="avatar">J</div>
+              <div><div class="nm">Jibran Ali</div><div class="rl">student</div></div>
+            </div>
+          </aside>
+          <div class="main">
+            <div class="head-row">
+              <div><h2>Hello, Jibran Ali</h2><p class="lead">Student overview</p></div>
+            </div>
+            <div class="stats" style="grid-template-columns:repeat(3,1fr)">
+              <div class="stat"><div class="v">4</div><div class="l">Enrolled Courses</div></div>
+              <div class="stat a"><div class="v">2</div><div class="l">Upcoming Exams</div></div>
+              <div class="stat g"><div class="v">9</div><div class="l">Completed Exams</div></div>
+            </div>
+            <div class="panel" style="margin-bottom:16px">
+              <h3>My courses</h3>
+              <div class="courses">
+                <div class="course"><div class="code">CSC336</div><div class="t">Web Technologies</div></div>
+                <div class="course"><div class="code">CSC220</div><div class="t">Data Structures</div></div>
+                <div class="course"><div class="code">CSC391</div><div class="t">Artificial Intelligence</div></div>
+                <div class="course"><div class="code">CSC301</div><div class="t">Database Systems</div></div>
+              </div>
+            </div>
+            <div class="panel">
+              <h3>Upcoming examinations</h3>
+              <p class="lead" style="margin:0">Exam scheduling arrives in Module 4 (Phase 2).</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+  <p class="footnote">Mockup mirrors the built React UI · indigo #4f7cff · light &amp; dark theme aware · switch screens with the tabs above.</p>
+</div>
+
+<script>
+  const urls = {
+    login: 'app.e-testing.local / login',
+    instructor: 'app.e-testing.local / instructor',
+    questions: 'app.e-testing.local / questions',
+    student: 'app.e-testing.local / student',
+  };
+  const tabs = document.querySelectorAll('.tabs button');
+  const screens = document.querySelectorAll('.screen');
+  const url = document.getElementById('url');
+  tabs.forEach((t) => t.addEventListener('click', () => {
+    const id = t.dataset.screen;
+    tabs.forEach((x) => x.classList.toggle('active', x === t));
+    screens.forEach((s) => s.classList.toggle('active', s.id === id));
+    url.textContent = urls[id];
+  }));
+</script>

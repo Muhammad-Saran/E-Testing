@@ -1,0 +1,86 @@
+import csv
+import io
+
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
+from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.response import Response
+
+from src.core.permissions import IsInstructor
+from .filters import QuestionFilter
+from .models import Question, QuestionType
+from .serializers import QuestionSerializer
+
+
+class QuestionViewSet(viewsets.ModelViewSet):
+    """
+    Full CRUD over an instructor's question bank (scope doc, Module 2).
+    Instructors only see and manage their own questions. Supports filtering
+    by course/type/difficulty/subject and free-text search, plus CSV import.
+    """
+    serializer_class = QuestionSerializer
+    permission_classes = [IsInstructor]
+    filterset_class = QuestionFilter
+    search_fields = ['text', 'subject']
+    ordering_fields = ['created_at', 'difficulty', 'marks']
+
+    def get_queryset(self):
+        return (
+            Question.objects
+            .filter(created_by=self.request.user)
+            .prefetch_related('options')
+        )
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
+
+    @action(detail=False, methods=['get'])
+    def stats(self, request):
+        """Summary counts for the instructor dashboard."""
+        qs = self.get_queryset()
+        by_type = {t.value: qs.filter(question_type=t.value).count() for t in QuestionType}
+        return Response({
+            'total': qs.count(),
+            'active': qs.filter(is_active=True).count(),
+            'ai_generated': qs.filter(is_ai_generated=True).count(),
+            'by_type': by_type,
+        })
+
+    @action(detail=False, methods=['post'], parser_classes=[MultiPartParser, FormParser])
+    def import_csv(self, request):
+        """
+        Bulk import questions from a CSV (scope doc, Module 2).
+        Columns: text, question_type, difficulty, subject, marks, correct_answer_text
+        """
+        upload = request.FILES.get('file')
+        if not upload:
+            return Response({'detail': 'No file provided (field name: file).'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        try:
+            decoded = upload.read().decode('utf-8-sig')
+        except UnicodeDecodeError:
+            return Response({'detail': 'File must be UTF-8 encoded CSV.'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        reader = csv.DictReader(io.StringIO(decoded))
+        created, errors = 0, []
+        for i, row in enumerate(reader, start=2):  # header is row 1
+            data = {
+                'text': (row.get('text') or '').strip(),
+                'question_type': (row.get('question_type') or 'short_answer').strip(),
+                'difficulty': (row.get('difficulty') or 'understand').strip(),
+                'subject': (row.get('subject') or '').strip(),
+                'marks': int(row['marks']) if (row.get('marks') or '').strip().isdigit() else 1,
+                'correct_answer_text': (row.get('correct_answer_text') or '').strip(),
+            }
+            serializer = self.get_serializer(data=data)
+            if serializer.is_valid():
+                serializer.save(created_by=request.user)
+                created += 1
+            else:
+                errors.append({'row': i, 'errors': serializer.errors})
+
+        return Response(
+            {'created': created, 'failed': len(errors), 'errors': errors[:20]},
+            status=status.HTTP_201_CREATED if created else status.HTTP_400_BAD_REQUEST,
+        )
