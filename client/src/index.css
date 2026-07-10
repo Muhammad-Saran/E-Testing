@@ -64,6 +64,7 @@ input:focus, select:focus, textarea:focus {
 .btn-ghost:hover { background: var(--bg); }
 
 .alert-error { background: #fef2f2; color: #b91c1c; padding: 0.6rem 0.8rem; border-radius: 8px; font-size: 0.85rem; }
+.alert-ok { background: #ecfdf3; color: #15803d; padding: 0.6rem 0.8rem; border-radius: 8px; font-size: 0.85rem; }
 .field-error { color: var(--danger); font-size: 0.78rem; font-weight: 500; }
 
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
@@ -128,7 +129,17 @@ input:focus, select:focus, textarea:focus {
 .data-table th { text-align: left; font-size: 0.75rem; text-transform: uppercase; color: var(--muted); padding: 0.6rem; border-bottom: 2px solid var(--border); }
 .data-table td { padding: 0.75rem 0.6rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
 .q-text { max-width: 380px; }
-.tag { background: #eff3ff; color: var(--primary); padding: 0.15rem 0.55rem; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
+.tag { background: #eff3ff; color: var(--primary); padding: 0.15rem 0.55rem; border-radius: 20px; font-size: 0.78rem; font-weight: 600; text-transform: capitalize; }
+.tag-green { background: #ecfdf3; color: #15803d; }
+.exam-timer { font-variant-numeric: tabular-nums; font-weight: 800; font-size: 1.15rem; padding: 0.4rem 0.9rem; border-radius: 9px; background: #eff3ff; color: var(--primary); }
+.exam-timer.warn { background: #fef2f2; color: #b91c1c; }
+.q-card { border: 1px solid var(--border); border-radius: 12px; padding: 1.1rem 1.25rem; margin-bottom: 1rem; }
+.q-card .q-head { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted); margin-bottom: 0.6rem; }
+.opt-row { display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0.6rem; border: 1px solid var(--border); border-radius: 9px; margin-bottom: 0.4rem; cursor: pointer; }
+.opt-row:hover { background: var(--bg); }
+.opt-row.chosen { border-color: var(--primary); background: #eff3ff; }
+.result-hero { text-align: center; padding: 2rem; }
+.result-score { font-size: 3rem; font-weight: 800; color: var(--primary); font-variant-numeric: tabular-nums; }
 .row-actions { display: flex; gap: 0.75rem; }
 .link { background: none; border: none; color: var(--primary); cursor: pointer; font-weight: 600; font-size: 0.85rem; padding: 0; }
 .link.danger { color: var(--danger); }

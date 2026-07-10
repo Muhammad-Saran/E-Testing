@@ -53,7 +53,10 @@ export default function StudentDashboard() {
 
       <section className="panel">
         <h2>Upcoming examinations</h2>
-        <p className="muted">Exam scheduling arrives in Module 4 (Phase 2).</p>
+        <p className="muted">
+          You have <strong>{s.upcoming_exams}</strong> exam{s.upcoming_exams === 1 ? '' : 's'} open to take.
+          Head to the <strong>Exams</strong> tab to start.
+        </p>
       </section>
     </div>
   )

@@ -9,9 +9,13 @@ export default function Layout() {
   const links = isInstructor
     ? [
         { to: '/instructor', label: 'Dashboard' },
-        { to: '/questions', label: 'Question Bank' },
+        { to: '/courses', label: 'Courses' },
+        { to: '/exams', label: 'Exams' },
       ]
-    : [{ to: '/student', label: 'Dashboard' }]
+    : [
+        { to: '/student', label: 'Dashboard' },
+        { to: '/exams', label: 'Exams' },
+      ]
 
   return (
     <div className="app-shell">

@@ -6,7 +6,15 @@ import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 import StudentDashboard from './pages/StudentDashboard.jsx'
 import InstructorDashboard from './pages/InstructorDashboard.jsx'
-import QuestionBank from './pages/QuestionBank.jsx'
+import Courses from './pages/Courses.jsx'
+import InstructorExams from './pages/InstructorExams.jsx'
+import StudentExams from './pages/StudentExams.jsx'
+
+// One /exams route; render the instructor or student view based on role.
+function ExamsPage() {
+  const { user } = useAuth()
+  return user.role === 'instructor' ? <InstructorExams /> : <StudentExams />
+}
 
 // Send a logged-in user to the dashboard matching their role.
 function HomeRedirect() {
@@ -30,12 +38,16 @@ export default function App() {
           element={<ProtectedRoute role="instructor"><InstructorDashboard /></ProtectedRoute>}
         />
         <Route
-          path="/questions"
-          element={<ProtectedRoute role="instructor"><QuestionBank /></ProtectedRoute>}
+          path="/courses"
+          element={<ProtectedRoute role="instructor"><Courses /></ProtectedRoute>}
         />
         <Route
           path="/student"
           element={<ProtectedRoute role="student"><StudentDashboard /></ProtectedRoute>}
+        />
+        <Route
+          path="/exams"
+          element={<ProtectedRoute><ExamsPage /></ProtectedRoute>}
         />
       </Route>
 

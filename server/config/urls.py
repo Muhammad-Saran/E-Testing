@@ -37,6 +37,7 @@ urlpatterns = [
     path('api/auth/', include('src.services.accounts.urls')),
     path('api/courses/', include('src.services.courses.urls')),
     path('api/questions/', include('src.services.questionbank.urls')),
+    path('api/exams/', include('src.services.exams.urls')),
     path('api/dashboard/', include('src.services.dashboard.urls')),
 ]
 

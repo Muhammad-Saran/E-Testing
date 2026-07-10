@@ -23,7 +23,7 @@ export default function InstructorDashboard() {
     { label: 'Courses', value: s.courses, accent: 'blue' },
     { label: 'Students', value: s.students, accent: 'green' },
     { label: 'Questions', value: s.questions, accent: 'purple' },
-    { label: 'AI-Generated', value: s.ai_questions, accent: 'amber' },
+    { label: 'Exams', value: s.exams, accent: 'amber' },
   ]
 
   const chartData = typeStats && {
@@ -56,7 +56,7 @@ export default function InstructorDashboard() {
 
       <div className="panel-row">
         <section className="panel">
-          <h2>Question bank composition</h2>
+          <h2>Questions by type</h2>
           {chartData
             ? <Bar data={chartData} options={{ plugins: { legend: { display: false } }, responsive: true }} />
             : <p className="muted">No questions yet.</p>}

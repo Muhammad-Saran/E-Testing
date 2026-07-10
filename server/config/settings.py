@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'src.services.accounts',
     'src.services.courses',
     'src.services.questionbank',
+    'src.services.exams',
     'src.services.dashboard',
 ]
 
