@@ -46,5 +46,5 @@ if settings.DEBUG:
 # --- Built React app: static assets + SPA catch-all (keep last) ---
 urlpatterns += [
     re_path(r'^assets/(?P<path>.*)$', serve, {'document_root': settings.FRONTEND_DIST / 'assets'}),
-    re_path(r'^(?!api/|admin/|media/).*$', spa),
+    re_path(r'^(?!api/|admin/|media/|static/).*$', spa),
 ]
