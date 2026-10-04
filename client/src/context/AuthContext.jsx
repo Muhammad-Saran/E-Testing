@@ -46,13 +46,20 @@ export function AuthProvider({ children }) {
   }
 
   function logout() {
-    api.post('/auth/logout/').catch(() => {})
+    // Server blacklists the refresh token so it can't be reused after logout.
+    // Tokens are read now because storage is cleared before the request goes out.
+    const access = localStorage.getItem('access')
+    const refresh = localStorage.getItem('refresh')
+    if (access) {
+      api.post('/auth/logout/', { refresh }, { headers: { Authorization: `Bearer ${access}` }, _retried: true })
+        .catch(() => {})
+    }
     localStorage.clear()
     setUser(null)
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, updateUser: persist }}>
       {children}
     </AuthContext.Provider>
   )

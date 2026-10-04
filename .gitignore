@@ -5,11 +5,14 @@ __pycache__/
 server/db.sqlite3
 server/media/
 server/staticfiles/
+server/logs/
 server/.env
 
 # ---- Node / React ----
 node_modules/
 client/dist/
+client/test-results/
+client/playwright-report/
 client/.env
 
 # ---- Editor / OS ----

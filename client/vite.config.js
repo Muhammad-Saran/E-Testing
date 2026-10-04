@@ -5,4 +5,19 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: { port: 5173 },
+  build: {
+    rollupOptions: {
+      output: {
+        // Charts are only needed on dashboards/analytics; keep them in their own cached chunk.
+        manualChunks: { charts: ['chart.js', 'react-chartjs-2'] },
+      },
+    },
+  },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: './src/test/setup.js',
+    include: ['src/**/*.test.{js,jsx}'],
+    css: false,
+  },
 })

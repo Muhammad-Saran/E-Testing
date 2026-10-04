@@ -29,6 +29,10 @@ cd client && npm run build
 # run everything
 cd server && python manage.py migrate && python manage.py runserver   # http://127.0.0.1:8000
 ```
+Demo data: `python manage.py seed_demo` (log in as instructor@demo.edu / student@demo.edu,
+password Demo@12345). Tests: `python manage.py test src`, `cd client && npm test && npm run e2e`.
+AI models (optional, recommended): `pip install -r requirements-ai.txt` (CPU torch first), then
+`python manage.py ai_warmup`. Without them a rule-based fallback is used.
 Optional hot-reload dev: set `VITE_API_URL=http://127.0.0.1:8000/api` in `client/.env`, run
 `npm run dev` (:5173) alongside `runserver`.
 
@@ -40,6 +44,9 @@ Optional hot-reload dev: set `VITE_API_URL=http://127.0.0.1:8000/api` in `client
 | Auth / users (Module 1) | `server/src/services/accounts/` |
 | Courses / enrollment / materials | `server/src/services/courses/` |
 | Question bank (Module 2) | `server/src/services/questionbank/` |
+| Exams, delivery, grading (Modules 4–6) | `server/src/services/exams/` (logic in `services.py`) |
+| AI: T5 generation + semantic grading (Modules 3, 6) | `server/src/services/ai/` (`engine.py`, `generation.py`) |
+| Notifications (Module 9) | `server/src/services/notifications/` (`services.notify`) |
 | Dashboards (Modules 7 & 8) | `server/src/services/dashboard/` |
 
 If anything here disagrees with the code, the code wins — update `AGENTS.md`.

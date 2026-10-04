@@ -8,3 +8,10 @@ django-filter==25.2
 bcrypt==5.0.0
 
 # Database: SQLite ships with Python — no driver needed.
+
+# Reading uploaded course material (PDF) for AI question generation.
+pypdf>=5
+
+# Production serving: `python manage.py serve` (Waitress) + static files (WhiteNoise).
+waitress>=3
+whitenoise>=6
