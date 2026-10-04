@@ -17,7 +17,8 @@ class UserSerializer(serializers.ModelSerializer):
             'id', 'email', 'first_name', 'last_name', 'full_name',
             'role', 'registration_number', 'is_active', 'date_joined',
         ]
-        read_only_fields = ['id', 'is_active', 'date_joined']
+        # email is the login id and role drives RBAC — neither is self-editable.
+        read_only_fields = ['id', 'email', 'role', 'is_active', 'date_joined']
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -70,3 +71,19 @@ class LoginTokenSerializer(TokenObtainPairSerializer):
         data = super().validate(attrs)
         data['user'] = UserSerializer(self.user).data
         return data
+
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    uid = serializers.CharField()
+    token = serializers.CharField()
+    password = serializers.CharField(write_only=True, min_length=8)
+    password_confirm = serializers.CharField(write_only=True)
+
+    def validate(self, attrs):
+        if attrs['password'] != attrs['password_confirm']:
+            raise serializers.ValidationError({'password_confirm': 'Passwords do not match.'})
+        return attrs

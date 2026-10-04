@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Exam, ExamAnswer, ExamAttempt, ExamQuestion
+from .models import Exam, ExamAnswer, ExamAttempt, ExamQuestion, ProctorEvent
 
 
 class ExamQuestionInline(admin.TabularInline):
@@ -18,8 +18,18 @@ class ExamAdmin(admin.ModelAdmin):
 
 @admin.register(ExamAttempt)
 class ExamAttemptAdmin(admin.ModelAdmin):
-    list_display = ['exam', 'student', 'is_submitted', 'score', 'started_at', 'submitted_at']
+    list_display = ['exam', 'student', 'is_submitted', 'auto_submitted', 'score', 'started_at', 'submitted_at']
     list_filter = ['is_submitted', 'exam']
+
+    def has_change_permission(self, request, obj=None):
+        # Results are immutable once computed.
+        return False
+
+
+@admin.register(ProctorEvent)
+class ProctorEventAdmin(admin.ModelAdmin):
+    list_display = ['attempt', 'event_type', 'occurred_at']
+    list_filter = ['event_type']
 
 
 admin.site.register(ExamAnswer)

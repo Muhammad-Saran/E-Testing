@@ -8,7 +8,12 @@ from django.views.static import serve
 
 def health(request):
     """Simple liveness probe used by the frontend and for quick manual checks."""
-    return JsonResponse({'status': 'ok', 'service': 'e-testing-api', 'environment': settings.ENVIRONMENT})
+    from src.services.accounts.models import User
+    return JsonResponse({
+        'status': 'ok', 'service': 'e-testing-api', 'environment': settings.ENVIRONMENT,
+        # Lets the sign-in page offer the demo logins created by `manage.py seed_demo`.
+        'demo_accounts': User.objects.filter(email__iendswith='@demo.edu').exists(),
+    })
 
 
 def spa(request, *args, **kwargs):
@@ -39,6 +44,8 @@ urlpatterns = [
     path('api/questions/', include('src.services.questionbank.urls')),
     path('api/exams/', include('src.services.exams.urls')),
     path('api/dashboard/', include('src.services.dashboard.urls')),
+    path('api/notifications/', include('src.services.notifications.urls')),
+    path('api/ai/', include('src.services.ai.urls')),
 ]
 
 if settings.DEBUG:

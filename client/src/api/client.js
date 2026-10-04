@@ -1,6 +1,7 @@
 import axios from 'axios'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api'
+// Same origin by default (Django serves the built app); set VITE_API_URL for the Vite dev server.
+const API_URL = import.meta.env.VITE_API_URL || '/api'
 
 export const api = axios.create({ baseURL: API_URL })
 
@@ -25,6 +26,8 @@ api.interceptors.response.use(
         const { data } = await refreshing
         refreshing = null
         localStorage.setItem('access', data.access)
+        // Refresh tokens rotate: the old one is blacklisted, so keep the new one.
+        if (data.refresh) localStorage.setItem('refresh', data.refresh)
         original.headers.Authorization = `Bearer ${data.access}`
         return api(original)
       } catch (e) {
